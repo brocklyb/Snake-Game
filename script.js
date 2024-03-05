@@ -101,11 +101,9 @@ var cellOneHundred = document.getElementById('c100');
 
 const Snake = {
     length:1,
-    snakeLocations:[],
-    blackLocations:[],
-    direction:'Some function that can return the location of the next tile based on the user direction',
     headLocation:'c55',
-    tailLocation:1,
+    bodyLocations: [],
+    tailLocation: '',
     calculateHead:'a function that returns the head',
     calculateTail:'c function that returns the tail',
 }
@@ -115,15 +113,6 @@ const Snake = {
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 var pressedButton = ""  
-var currentSnakeHead = parseInt(Snake.headLocation.slice(1))
-var nextSnakeHead = currentSnakeHead
-
-var snakeHistory = []
-var snakeHead = snakeHistory[0]
-var snakeBody = []
-var snakeTail = snakeBody[-1]
-var snakeLength = 2
-
 
 function startApp(){
     setInterval(addHead, 500);
@@ -133,60 +122,71 @@ function startApp(){
 
 //add a head to the snake
 function addHead(){
-    if(pressedButton != ""){
-        var newHead = nextHeadLocation(pressedButton)
-
-        var matchDiv = document.getElementById(newHead)
-        matchDiv.style.background='red'
-    
-        snakeHistory.push(newHead)
-        //console.log(snakeHistory)
-        adjustSnake()
+    if(Snake.length == 1){
+        var firstSnakeHead = document.getElementById(Snake.headLocation)
+        firstSnakeHead.style.background = 'red'
     }
+
+    //findsds where next cell to plot and then does plot
+    var newHeadLocation = nextHeadLocation(pressedButton, parseInt(Snake.headLocation.slice(1)))
+    plotCell(newHeadLocation)
+
+
+    //moves the headLocation in into bodyLocation
+    if(!Snake.bodyLocations.includes(Snake.headLocation)){
+        Snake.bodyLocations.unshift(Snake.headLocation)
+    }
+
+    //sets object new head location 
+    Snake.headLocation = newHeadLocation
+    //sets object new tail location
+    Snake.tailLocation = Snake.bodyLocations[0]
+    
+    removeTail(Snake.tailLocation)
+ 
 }
 
 
-//calcualte new head, body, and tail
-function adjustSnake(){
-    var previousHead = snakeHistory.shift()
-    console.log(previousHead)
-    var previousDiv = document.getElementById(previousHead)
-    console.log(previousDiv)
-    //previousDiv.style.backgroundColor='aquamarine'
+//pass this function the ID of the Div to change its color
+function plotCell(location){
+    var newHead = document.getElementById(location)
+    newHead.style.backgroundColor = 'red'
 }
 
-//remove tail after adjusting snake
-function removeTail(){
-
-    var tail = snakeHistory[0]
-    var tailDiv = document.getElementById(tail)
-    tailDiv.style.background='aquamarine'
-    //snakeHistory.shift()
+function removeTail(location){
+    var tail = document.getElementById(location)
+    tail.style.backgroundColor = 'aquamarine'
 }
 
 
 
-//Move snake around screen
-function nextHeadLocation(direction){
-    var nextHead 
+
+
+//Determines next head location based off the current locations cell number
+//returns a string that matches the corespondign Div ID
+function nextHeadLocation(direction, currentHeadNumber){
+    var currentHead = currentHeadNumber
+    var outputNextHead = 0
     if(direction=='LEFT'){
-        nextSnakeHead -=10
-        nextHead = nextSnakeHead
+        currentHead -=10
+        outputNextHead = currentHead
+        return 'c' + outputNextHead.toString()
     }
     if(direction=='UP'){
-        nextSnakeHead -=1
-        nextHead = nextSnakeHead
+        currentHead -=1
+        outputNextHead = currentHead
+        return 'c' + outputNextHead.toString()
     }
     if(direction=='RIGHT'){
-        nextSnakeHead +=10
-        nextHead = nextSnakeHead
+        currentHead +=10
+        outputNextHead = currentHead
+        return 'c' + outputNextHead.toString()
     }
     if(direction=='DOWN'){
-        nextSnakeHead +=1
-        nextHead = nextSnakeHead
+        currentHead +=1
+        outputNextHead = currentHead
+        return 'c' + outputNextHead.toString()
     }
-    outputHead = nextHead.toString()
-    return outputHead.slice(0,0) + "c" + outputHead
 }
 
 
@@ -199,7 +199,6 @@ document.addEventListener('keydown', handleKeyDown);
 function handleKeyDown(event) {
     const key = event.key;
     if(key == 'ArrowLeft'){
-        //console.log('LEFT')
         pressedButton="LEFT"
         //console.log(pressedButton)
     }
@@ -228,19 +227,9 @@ function handleKeyUp(event) {
 
 
 
-
-
-
-
-
-
-
-
-
 // Event listener for keyup
 //function handleKeyUp(event) {
 //    const key = event.key;
 //    pressedButtons = pressedButtons.filter(pressedKey => pressedKey !== key);
 //}
 //document.addEventListener('keyup', handleKeyUp);
-
