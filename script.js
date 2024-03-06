@@ -102,10 +102,14 @@ var cellOneHundred = document.getElementById('c100');
 const Snake = {
     length:1,
     headLocation:'c55',
-    bodyLocations: [],
-    tailLocation: '',
+    bodyLocations: ['c55'],
+    tailLocation: 'c55',
     calculateHead:'a function that returns the head',
     calculateTail:'c function that returns the tail',
+}
+
+const Food = {
+    location: ''
 }
 
 
@@ -113,53 +117,91 @@ const Snake = {
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 var pressedButton = ""  
-
 function startApp(){
-    setInterval(addHead, 500);
+    //setInterval(addHead, 500);
+    setInterval(appContainer, 500);
 }
 
 
-
-//add a head to the snake
-function addHead(){
-    if(Snake.length == 1){
-        var firstSnakeHead = document.getElementById(Snake.headLocation)
-        firstSnakeHead.style.background = 'red'
+function appContainer(){
+    var nextHead = locateNextHead()
+    if(isCollision(nextHead)){
+        console.log("COLLISION")
     }
+    updateHeadAndBody(nextHead)
+    updateTail()
+    updateSnakeBody()
+    //console.log('head'+Snake.headLocation)
+    //console.log('tail'+Snake.tailLocation)
+    //console.log(Snake.bodyLocations)
+    plotSnake()
+    removeTail()
+}
 
-    //findsds where next cell to plot and then does plot
+function locateNextHead(){
     var newHeadLocation = nextHeadLocation(pressedButton, parseInt(Snake.headLocation.slice(1)))
-    plotCell(newHeadLocation)
+    //console.log(newHeadLocation)
+    return newHeadLocation
+}
+
+function isCollision(nextHead){
+    if(Snake.bodyLocations.includes(nextHead)){
+        return true
+    }else{
+        return false
+    }
+}
 
 
-    //moves the headLocation in into bodyLocation
-    if(!Snake.bodyLocations.includes(Snake.headLocation)){
-        Snake.bodyLocations.unshift(Snake.headLocation)
+function updateHeadAndBody(nextHead){
+    if(nextHead == undefined){
+        return
+    }
+    var currentHead = Snake.headLocation
+    Snake.bodyLocations.unshift(currentHead)
+    Snake.headLocation = nextHead
+}
+
+
+function updateTail(){
+    var body = Snake.bodyLocations
+    var snakeTail = body[body.length -1]
+    Snake.tailLocation = snakeTail
+
+}
+
+
+function updateSnakeBody(){
+    while(Snake.bodyLocations.length>=Snake.length){
+        Snake.bodyLocations.pop()
+    }
+}
+
+function plotSnake(){
+    if(Snake.tailLocation == undefined){
+        return
     }
 
-    //sets object new head location 
-    Snake.headLocation = newHeadLocation
-    //sets object new tail location
-    Snake.tailLocation = Snake.bodyLocations[0]
+    if(Snake.length == 1){
+        var singleCellSnake = document.getElementById(Snake.headLocation)
+        singleCellSnake.style.backgroundColor = 'red'
+    }
     
-    removeTail(Snake.tailLocation)
- 
+    //for(let i=0; i<=Snake.bodyLocations.length;i++){
+    //    var body = document.getElementById(Snake.bodyLocations[i])
+    //    body.style.backgroundColor = 'red'
+        //console.log('SNAKE to plot')
+    //    console.log(Snake.bodyLocations)
+    //}
 }
 
-
-//pass this function the ID of the Div to change its color
-function plotCell(location){
-    var newHead = document.getElementById(location)
-    newHead.style.backgroundColor = 'red'
-}
-
-function removeTail(location){
-    var tail = document.getElementById(location)
+function removeTail(){
+    var tail = document.getElementById(Snake.tailLocation)
+    if(tail == null){
+        return
+    }
     tail.style.backgroundColor = 'aquamarine'
 }
-
-
-
 
 
 //Determines next head location based off the current locations cell number
@@ -224,12 +266,3 @@ function handleKeyUp(event) {
     pressedButton = "";
 }
 
-
-
-
-// Event listener for keyup
-//function handleKeyUp(event) {
-//    const key = event.key;
-//    pressedButtons = pressedButtons.filter(pressedKey => pressedKey !== key);
-//}
-//document.addEventListener('keyup', handleKeyUp);
