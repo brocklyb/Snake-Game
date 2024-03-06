@@ -100,16 +100,16 @@ var cellNinetyNine = document.getElementById('c99');
 var cellOneHundred = document.getElementById('c100');
 
 const Snake = {
-    length:1,
+    length:2,
     headLocation:'c55',
-    bodyLocations: ['c55'],
-    tailLocation: 'c55',
+    bodyLocations: [],
+    tailLocation: '',
     calculateHead:'a function that returns the head',
     calculateTail:'c function that returns the tail',
 }
 
 const Food = {
-    location: ''
+    location: 'c15'
 }
 
 
@@ -119,15 +119,27 @@ const Food = {
 var pressedButton = ""  
 function startApp(){
     //setInterval(addHead, 500);
-    setInterval(appContainer, 500);
+    setInterval(appContainer, 200);
 }
 
 
 function appContainer(){
+    plotFood()
+
+    if(pressedButton == ""){
+        return
+    }
+
     var nextHead = locateNextHead()
+    var nextHeadDiv = document.getElementById(nextHead)
+    if(nextHeadDiv.id == Food.location){
+        Snake.length+=1
+    }
+
     if(isCollision(nextHead)){
         console.log("COLLISION")
     }
+
     updateHeadAndBody(nextHead)
     updateTail()
     updateSnakeBody()
@@ -135,7 +147,12 @@ function appContainer(){
     //console.log('tail'+Snake.tailLocation)
     //console.log(Snake.bodyLocations)
     plotSnake()
-    removeTail()
+}
+
+function plotFood(){
+    var foodLocation = Food.location 
+    var food = document.getElementById(foodLocation)
+    food.style.backgroundColor = 'blue'
 }
 
 function locateNextHead(){
@@ -167,7 +184,6 @@ function updateTail(){
     var body = Snake.bodyLocations
     var snakeTail = body[body.length -1]
     Snake.tailLocation = snakeTail
-
 }
 
 
@@ -187,12 +203,12 @@ function plotSnake(){
         singleCellSnake.style.backgroundColor = 'red'
     }
     
-    //for(let i=0; i<=Snake.bodyLocations.length;i++){
-    //    var body = document.getElementById(Snake.bodyLocations[i])
-    //    body.style.backgroundColor = 'red'
-        //console.log('SNAKE to plot')
-    //    console.log(Snake.bodyLocations)
-    //}
+    for(let i=0; i<Snake.bodyLocations.length;i++){
+        var body = document.getElementById(Snake.bodyLocations[i])
+        body.style.backgroundColor = 'red'
+        
+    }
+    removeTail()
 }
 
 function removeTail(){
