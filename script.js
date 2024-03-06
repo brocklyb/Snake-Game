@@ -126,9 +126,9 @@ function startApp(){
 function appContainer(){
     plotFood()
 
-    if(pressedButton == ""){
-        return
-    }
+    //if(pressedButton == ""){
+    //    return
+    //}
 
     var nextHead = locateNextHead()
     var nextHeadDiv = document.getElementById(nextHead)
@@ -206,8 +206,9 @@ function plotSnake(){
     for(let i=0; i<Snake.bodyLocations.length;i++){
         var body = document.getElementById(Snake.bodyLocations[i])
         body.style.backgroundColor = 'red'
-        
     }
+    var head = document.getElementById(Snake.headLocation)
+    head.style.backgroundColor='red'
     removeTail()
 }
 
@@ -248,11 +249,7 @@ function nextHeadLocation(direction, currentHeadNumber){
 }
 
 
-
-
-
 document.addEventListener('keydown', handleKeyDown);
- 
 // Event listener for keydown
 function handleKeyDown(event) {
     const key = event.key;
@@ -272,7 +269,6 @@ function handleKeyDown(event) {
         pressedButton="DOWN"
         //console.log(pressedButton)
     }
-
 }
 
 // Event listener for keyup
